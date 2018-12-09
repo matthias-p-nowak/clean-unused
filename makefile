@@ -17,11 +17,11 @@ all: $(TARGET)
 ##################################################
 ##### precompiled headers section - C++ case #####
 ##################################################
-CXXFLAGS+=-H
+CXXFLAGS+=-H -g
 HDRS=$(wildcard *.h)
 GCHS=$(HDRS:.h=.h.gch)
 %.h.gch: %.h
-	$(CXX) $(CFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^
 $(OBJS): $(GCHS)
 
 #############################
