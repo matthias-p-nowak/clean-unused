@@ -19,6 +19,7 @@
 struct _global{
   std::shared_ptr<ClObj> old;
   struct timespec cutOff;
+  int maxFiles;
 };
 
 extern _global _glob;
