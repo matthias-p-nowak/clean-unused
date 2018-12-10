@@ -3,23 +3,31 @@
 
 
 #include <cstdlib>
+#include <dirent.h>
+#include <fcntl.h>      /* Definition of AT_* constants */
+#include <iostream>
+#include <limits.h>
 #include <memory>
 #include <stdio.h>
+#include <string>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <iostream>
-
-
-#include "cl-obj.h"
 
 #define UNREACHED fprintf(stderr,"REACHED:%s:%d\n",__FILE__,__LINE__);
 
+void housekeeping();
+void record(char *path, time_t atime);
+void removeFiles();
+
 struct _global{
-  std::shared_ptr<ClObj> old;
-  struct timespec cutOff;
+  time_t cutOff;
+  time_t oldest;
   int maxFiles;
+  dev_t device;
+  int verbose;
+  bool removeLinks;
 };
 
 extern _global _glob;

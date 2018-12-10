@@ -17,11 +17,11 @@ all: $(TARGET)
 ##################################################
 ##### precompiled headers section - C++ case #####
 ##################################################
-CXXFLAGS+=-H
+CXXFLAGS+=-H -g
 HDRS=$(wildcard *.h)
 GCHS=$(HDRS:.h=.h.gch)
 %.h.gch: %.h
-	$(CXX) $(CFLAGS) -o $@ $^
+	$(CXX) $(CXXFLAGS) -o $@ $^
 $(OBJS): $(GCHS)
 
 #############################
@@ -37,7 +37,7 @@ clean:
 	rm -f *.o $(TARGET) *.gch
 
 git:
-	git add *.c *.h makefile
+	git add *.cc *.h makefile
 	git commit -a
 
 .PHONY: clean test all git
