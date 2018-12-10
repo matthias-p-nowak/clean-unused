@@ -28,38 +28,36 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=1
-FILE_NAME_0=819;Make;0;EISO-8859-1;1;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fmakefile;0;2
-FILE_NAME_1=1696;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.cc;0;2
-FILE_NAME_2=319;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.h;0;2
-FILE_NAME_3=300;C++;0;EISO-8859-1;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fcl-obj.h;0;2
-FILE_NAME_4=268;C++;0;EISO-8859-1;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fcl-obj.cc;0;2
-FILE_NAME_5=261;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fcluf%2Fcluf.h;0;2
-FILE_NAME_6=182;C;0;EISO-8859-1;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fhousekeeping.cc;0;2
-FILE_NAME_7=2925;C;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fcluf%2Fcluf_main.c;0;2
+current_page=0
+FILE_NAME_0=2877;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.cc;0;2
+FILE_NAME_1=453;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.h;0;2
+FILE_NAME_2=261;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fcluf%2Fcluf.h;0;2
+FILE_NAME_3=280;C;0;EISO-8859-1;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fhousekeeping.cc;0;2
+FILE_NAME_4=2925;C;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fcluf%2Fcluf_main.c;0;2
 
 [VTE]
 last_dir=/home/me/projects/cluf
 
 [build-menu]
 EX_00_LB=_Execute
-EX_00_CM="./%e" /tmp
+EX_00_CM="./%e" -vvv /tmp
 EX_00_WD=
 
 [debugger]
 target=/home/me/projects/clean-unused/clean-disk
 debugger=GDB
-arguments=/tmp
+arguments=-vvvv -n 5 /tmp
 envvar_count=0
-watches_count=0
+watches_count=1
+watch_0=bins
 breaks_count=2
-break_0_file=/home/me/projects/clean-unused/clean-disk.cc
-break_0_line=22
+break_0_file=/home/me/projects/clean-unused/housekeeping.cc
+break_0_line=59
 break_0_condition=
 break_0_hits_count=0
 break_0_enabled=true
-break_1_file=/home/me/projects/clean-unused/clean-disk.cc
-break_1_line=32
+break_1_file=/home/me/projects/clean-unused/housekeeping.cc
+break_1_line=66
 break_1_condition=
 break_1_hits_count=0
 break_1_enabled=true

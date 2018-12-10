@@ -15,18 +15,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-
-#include "cl-obj.h"
-
 #define UNREACHED fprintf(stderr,"REACHED:%s:%d\n",__FILE__,__LINE__);
 
 void housekeeping();
+void record(char *path, time_t atime);
 
 struct _global{
-  std::shared_ptr<ClObj> old;
   time_t cutOff;
+  time_t oldest;
   int maxFiles;
   dev_t device;
+  int verbose;
 };
 
 extern _global _glob;

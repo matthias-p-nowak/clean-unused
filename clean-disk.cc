@@ -19,26 +19,35 @@ void checkDir(char *dirName) {
   struct dirent *dirent;
   struct stat statbuf;
   char path[PATH_MAX];
-  cout << "checking content of dir: " << dirName <<endl;
+  if(_glob.verbose>1)
+    cout << "checking content of dir: " << dirName <<endl;
   while(dirent=readdir(d)) {
     // going through the entries
     if(!strcmp(dirent->d_name,".")||(!strcmp(dirent->d_name,"..")))
       continue;
-    if(!fstatat(fd,dirent->d_name,&statbuf, AT_SYMLINK_NOFOLLOW)){
+    if(!fstatat(fd,dirent->d_name,&statbuf, AT_SYMLINK_NOFOLLOW)) {
       if(statbuf.st_dev!=_glob.device)
-      continue;
+        continue;
       snprintf(path,PATH_MAX,"%s/%s",dirName,dirent->d_name);
-      if(S_ISDIR(statbuf.st_mode)){
-        checkDir(path);
-      }else{
-        if(S_ISREG(statbuf.st_mode)){
-          if(statbuf.st_atim.tv_sec > _glob.cutOff)
-          continue;
+      if(S_ISLNK(statbuf.st_mode)) {
+        if(fstatat(fd,dirent->d_name,&statbuf, 0)) {
+          if(_glob.verbose>2)
+            cout << dirName << " "<< dirent->d_name << " failed link...?"<< endl;
+          // TODO: remove dead symlinks
         }
-        
+      }
+      if(S_ISDIR(statbuf.st_mode)) {
+        checkDir(path);
+      } else {
+        if(S_ISREG(statbuf.st_mode)) {
+          auto t=statbuf.st_atim.tv_sec;
+          if(t > _glob.cutOff)
+            continue;
+          record(path,t);
+        }
       }
     }
-    }
+  }
   closedir(d);
 }
 
@@ -52,10 +61,12 @@ int main(int argc, char *argv[]) {
   int n,r;
   char indicator;
   _glob.cutOff=time(NULL);
+  _glob.maxFiles=1e9;
   while ((opt = getopt(argc, argv, "vn:t:")) != -1) {
     switch (opt) {
     case 'v':
       UNREACHED
+      ++_glob.verbose;
       break;
     case 'n':
       UNREACHED
@@ -109,10 +120,12 @@ int main(int argc, char *argv[]) {
     }
     UNREACHED
   }
+  _glob.oldest=_glob.cutOff-365*24*3600; // 1 year
   for (int i = optind; i < argc; ++i) {
     struct stat statbuf;
     if(!lstat(argv[i],&statbuf)) {
-      cout << "checking " << argv[i] << endl;
+      if(_glob.verbose>0)
+        cout << "checking " << argv[i] << endl;
       _glob.device=statbuf.st_dev;
       checkDir(argv[i]);
     }
