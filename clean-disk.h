@@ -9,10 +9,12 @@
 #include <limits.h>
 #include <memory>
 #include <stdio.h>
+#include <string>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+
 
 #include "cl-obj.h"
 

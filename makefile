@@ -37,7 +37,7 @@ clean:
 	rm -f *.o $(TARGET) *.gch
 
 git:
-	git add *.c *.h makefile
+	git add *.cc *.h makefile
 	git commit -a
 
 .PHONY: clean test all git

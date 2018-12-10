@@ -96,6 +96,7 @@ int main(int argc, char *argv[]) {
           print_usage(argv[0]);
           break;
         }
+        _glob.cutOff-=n;
       } else {
         printf("the time argument needs a number followed by a character\n");
         print_usage(argv[0]);
