@@ -28,12 +28,10 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=2877;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.cc;0;2
-FILE_NAME_1=453;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.h;0;2
-FILE_NAME_2=261;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fcluf%2Fcluf.h;0;2
-FILE_NAME_3=280;C;0;EISO-8859-1;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fhousekeeping.cc;0;2
-FILE_NAME_4=2925;C;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fcluf%2Fcluf_main.c;0;2
+current_page=2
+FILE_NAME_0=3755;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.cc;0;2
+FILE_NAME_1=474;C++;0;EUTF-8;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fclean-disk.h;0;2
+FILE_NAME_2=1961;C;0;EISO-8859-1;0;1;0;%2Fhome%2Fme%2Fprojects%2Fclean-unused%2Fhousekeeping.cc;0;2
 
 [VTE]
 last_dir=/home/me/projects/cluf
@@ -46,18 +44,24 @@ EX_00_WD=
 [debugger]
 target=/home/me/projects/clean-unused/clean-disk
 debugger=GDB
-arguments=-vvvv -n 5 /tmp
+arguments=-vvvvl -n 5 -t2w /tmp
 envvar_count=0
-watches_count=1
+watches_count=2
 watch_0=bins
-breaks_count=2
+watch_1=chain
+breaks_count=3
 break_0_file=/home/me/projects/clean-unused/housekeeping.cc
-break_0_line=59
+break_0_line=61
 break_0_condition=
 break_0_hits_count=0
 break_0_enabled=true
 break_1_file=/home/me/projects/clean-unused/housekeeping.cc
-break_1_line=66
+break_1_line=98
 break_1_condition=
 break_1_hits_count=0
 break_1_enabled=true
+break_2_file=/home/me/projects/clean-unused/housekeeping.cc
+break_2_line=99
+break_2_condition=
+break_2_hits_count=0
+break_2_enabled=true

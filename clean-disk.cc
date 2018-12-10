@@ -4,7 +4,11 @@ using namespace std;
 
 void print_usage(char *progname) {
   printf("Clean the disk\n"
-         "usage: %s\n"
+         "usage: %s [-vl] [-t <amount><h/d/w/m/y>] [-n <amount>]\n"
+         "	-v                      increase verbosity\n"
+         "	-l                      remove dead symlinks\n"
+         "	-t <amount><h/d/w/m/y>  remove files older than <amount> hours/days/weeks/months/years\n"
+         "	-n <amount>             remove <amount> files at most\n"
          ,progname);
   exit(EXIT_SUCCESS);
 }
@@ -29,11 +33,14 @@ void checkDir(char *dirName) {
       if(statbuf.st_dev!=_glob.device)
         continue;
       snprintf(path,PATH_MAX,"%s/%s",dirName,dirent->d_name);
-      if(S_ISLNK(statbuf.st_mode)) {
+      if(_glob.removeLinks && S_ISLNK(statbuf.st_mode)) {
         if(fstatat(fd,dirent->d_name,&statbuf, 0)) {
           if(_glob.verbose>2)
             cout << dirName << " "<< dirent->d_name << " failed link...?"<< endl;
           // TODO: remove dead symlinks
+          if(unlinkat(fd,dirent->d_name,0)){
+            perror("removing a symlink");
+          }
         }
       }
       if(S_ISDIR(statbuf.st_mode)) {
@@ -41,6 +48,8 @@ void checkDir(char *dirName) {
       } else {
         if(S_ISREG(statbuf.st_mode)) {
           auto t=statbuf.st_atim.tv_sec;
+          if (t<statbuf.st_mtim.tv_sec)
+            t=statbuf.st_mtim.tv_sec;
           if(t > _glob.cutOff)
             continue;
           record(path,t);
@@ -52,7 +61,6 @@ void checkDir(char *dirName) {
 }
 
 int main(int argc, char *argv[]) {
-  UNREACHED
   memset(&_glob,0,sizeof(_glob));
   if(argc<2) {
     print_usage(argv[0]);
@@ -62,14 +70,16 @@ int main(int argc, char *argv[]) {
   char indicator;
   _glob.cutOff=time(NULL);
   _glob.maxFiles=1e9;
-  while ((opt = getopt(argc, argv, "vn:t:")) != -1) {
+  while ((opt = getopt(argc, argv, "vln:t:")) != -1) {
     switch (opt) {
     case 'v':
-      UNREACHED
       ++_glob.verbose;
+      cout << "verbose is "<< _glob.verbose << endl;
+      break;
+    case 'l':
+      _glob.removeLinks=true;
       break;
     case 'n':
-      UNREACHED
       n=atoi(optarg);
       if(n>0)
         _glob.maxFiles=n;
@@ -79,7 +89,6 @@ int main(int argc, char *argv[]) {
       }
       break;
     case 't':
-      UNREACHED
       r=sscanf(optarg,"%d%c",&n,&indicator);
       if(r==2) {
         if(n<=0) {
@@ -114,13 +123,11 @@ int main(int argc, char *argv[]) {
       }
       break;
     default:
-      UNREACHED
       print_usage(argv[0]);
       break;
     }
-    UNREACHED
   }
-  _glob.oldest=_glob.cutOff-365*24*3600; // 1 year
+  _glob.oldest=_glob.cutOff-3600; // 1 year
   for (int i = optind; i < argc; ++i) {
     struct stat statbuf;
     if(!lstat(argv[i],&statbuf)) {
@@ -130,6 +137,9 @@ int main(int argc, char *argv[]) {
       checkDir(argv[i]);
     }
   }
+  removeFiles();
   cout << "all done" << endl;
   return 0;
 }
+
+

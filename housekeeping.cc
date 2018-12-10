@@ -16,7 +16,7 @@ public:
 shared_ptr<ClObj> chain;
 
 time_t rec_oldest=time(NULL);
-const int binCnt=10;
+const int binCnt=2000;
 int bins[binCnt];
 int files=0;
 
@@ -30,9 +30,9 @@ int getBin(time_t atime){
   return bin;
 }
 
-void checkMem() {
+void checkMem(bool forced=false) {
   static int ignores=0;
-  if(++ignores > 1)
+  if(!forced && (++ignores > 1))
     return; // not doing a check each time
   ignores=0;
   long am=sysconf(_SC_AVPHYS_PAGES);
@@ -41,7 +41,7 @@ void checkMem() {
       cout << "memory shortage" << endl;
     _glob.maxFiles=files/2;
   }
-  if(files<2*_glob.maxFiles)
+  if(!forced && (files<_glob.maxFiles))
     return;
   int i=0,n=0;
   for(i=0; i<binCnt; ++i) {
@@ -52,6 +52,8 @@ void checkMem() {
   ++i;
   auto nc=i*(_glob.cutOff-_glob.oldest)/binCnt+_glob.oldest;
   _glob.cutOff=nc;
+  if(rec_oldest>=nc)
+    rec_oldest=nc-3600;
   _glob.oldest=rec_oldest;
   memset(bins,0,sizeof(bins));
   files=0;
@@ -67,7 +69,6 @@ void checkMem() {
   }
 }
 
-
 void record(char *path, time_t atime) {
   if(atime<rec_oldest)
     rec_oldest=atime;
@@ -80,8 +81,25 @@ void record(char *path, time_t atime) {
   checkMem();
 }
 
-void old_stuff() {
-  long am=sysconf(_SC_AVPHYS_PAGES);
-  long ps=sysconf(_SC_PAGESIZE);
-  cout << "got "<< am << " as memory"<<endl;
+void removeFiles(){
+  checkMem(true);
+  // checkMem(true);
+  // checkMem(true);
+  int i,n=0;
+  for(i=0; i<binCnt; ++i) {
+    n+=bins[i];
+    if(n>_glob.maxFiles)
+      break;
+  }
+  auto maxAge=i*(_glob.cutOff-_glob.oldest)/binCnt+_glob.oldest;
+  while(chain!=nullptr){
+    if(chain->atime < maxAge){
+      if(_glob.verbose>2)
+        cout << "removing "<< chain->name << endl;
+      if(unlink(chain->name.c_str())){
+        perror("unlinking old files");
+      }
+    }
+    chain=chain->next;
+  }
 }

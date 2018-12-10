@@ -19,6 +19,7 @@
 
 void housekeeping();
 void record(char *path, time_t atime);
+void removeFiles();
 
 struct _global{
   time_t cutOff;
@@ -26,6 +27,7 @@ struct _global{
   int maxFiles;
   dev_t device;
   int verbose;
+  bool removeLinks;
 };
 
 extern _global _glob;
