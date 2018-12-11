@@ -8,11 +8,14 @@
 #include <iostream>
 #include <limits.h>
 #include <memory>
+#include <proc/readproc.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
 
 #define UNREACHED fprintf(stderr,"REACHED:%s:%d\n",__FILE__,__LINE__);

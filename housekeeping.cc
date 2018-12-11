@@ -21,8 +21,8 @@ int bins[binCnt];
 int files=0;
 
 
-int getBin(time_t atime){
-   int bin=(atime-_glob.oldest)*binCnt/(_glob.cutOff-_glob.oldest);
+int getBin(time_t atime) {
+  int bin=(atime-_glob.oldest)*binCnt/(_glob.cutOff-_glob.oldest);
   if(bin<0)
     bin=0;
   if(bin>=binCnt)
@@ -35,13 +35,25 @@ void checkMem(bool forced=false) {
   if(!forced && (++ignores > 1))
     return; // not doing a check each time
   ignores=0;
-  long am=sysconf(_SC_AVPHYS_PAGES);
-  if(am<1000) {
+  bool doSomething=false;
+  if(!forced){
+    long pp=sysconf(_SC_PHYS_PAGES);
+    proc_t proc_info;
+    pid_t pids[2]= {getpid(),0};
+    PROCTAB* proc = openproc(PROC_FILLMEM|PROC_PID,pids);
+    if(!readproc(proc, &proc_info)) {
+      perror("checking available memory");
+      exit(EXIT_FAILURE);
+    }
+    closeproc(proc);
+    doSomething=2*proc_info.resident >pp; // only use at most 50% of the memory
+  }
+  if(doSomething) {
     if(_glob.verbose>2)
       cout << "memory shortage" << endl;
     _glob.maxFiles=files/2;
   }
-  if(!forced && (files<_glob.maxFiles))
+  if(!forced && (files<2*_glob.maxFiles))
     return;
   int i=0,n=0;
   for(i=0; i<binCnt; ++i) {
@@ -60,7 +72,7 @@ void checkMem(bool forced=false) {
   while((chain!=nullptr) &&(chain->atime>_glob.cutOff))
     chain=chain->next;
   shared_ptr<ClObj> p=chain;
-  while(p!=nullptr){
+  while(p!=nullptr) {
     ++bins[getBin(p->atime)];
     ++files;
     while((p->next != nullptr)&&(p->next->atime >_glob.cutOff))
@@ -81,10 +93,8 @@ void record(char *path, time_t atime) {
   checkMem();
 }
 
-void removeFiles(){
+void removeFiles() {
   checkMem(true);
-  // checkMem(true);
-  // checkMem(true);
   int i,n=0;
   for(i=0; i<binCnt; ++i) {
     n+=bins[i];
@@ -92,11 +102,11 @@ void removeFiles(){
       break;
   }
   auto maxAge=i*(_glob.cutOff-_glob.oldest)/binCnt+_glob.oldest;
-  while(chain!=nullptr){
-    if(chain->atime < maxAge){
+  while(chain!=nullptr) {
+    if(chain->atime < maxAge) {
       if(_glob.verbose>2)
         cout << "removing "<< chain->name << endl;
-      if(unlink(chain->name.c_str())){
+      if(unlink(chain->name.c_str())) {
         perror("unlinking old files");
       }
     }

@@ -2,7 +2,6 @@
 # @copyright LGPL 3.0 https://opensource.org/licenses/lgpl-3.0.html
 #
 
-
 # ******************************************
 # ***** general definitions for C++ code *****
 # ******************************************
@@ -17,7 +16,8 @@ all: $(TARGET)
 ##################################################
 ##### precompiled headers section - C++ case #####
 ##################################################
-CXXFLAGS+=-H -g
+CXXFLAGS+= -g
+LDFLAGS= -lprocps
 HDRS=$(wildcard *.h)
 GCHS=$(HDRS:.h=.h.gch)
 %.h.gch: %.h
@@ -28,7 +28,7 @@ $(OBJS): $(GCHS)
 ##### rules for target ######
 #############################
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $(OBJS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJS)
 
 
 ##### general rules #####
